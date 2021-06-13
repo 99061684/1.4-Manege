@@ -207,14 +207,10 @@ function deleteEmployee($id){
 define('CST_VALIDATE_NAME', 'CST_VALIDATE_NAME');
 define('CST_VALIDATE_ADRESS', 'CST_VALIDATE_ADRESS');
 define('CST_VALIDATE_PHONE', 'CST_VALIDATE_PHONE');
-define('CST_VALIDATE_DATE', 'CST_VALIDATE_DATE');
-$errors = [];
+// $errors = [];
 
 // $array = ["name" => "bas VErdoorn"];
 // $data = formcontrole($array, ['name' => CST_VALIDATE_NAME,'age' => FILTER_VALIDATE_INT, 'email' => FILTER_VALIDATE_EMAIL], $errors);
-
-// $array = ["id" => 5];
-// $data = formcontrole($array, ['id' => $CST_VALIDATE_ID1], $errors);
 
 function formcontrole($data, $validation, &$errors){
 	$newData = [];
@@ -225,16 +221,13 @@ function formcontrole($data, $validation, &$errors){
 		}
 	}
  	foreach($newData as $key => $value){
+		echo $key;
+		echo $validation[$key];
 		switch ($validation[$key]) {
-			case $validation[$key][0] == 'CST_VALIDATE_ID':
-				if(filter_var($value, FILTER_SANITIZE_NUMBER_INT)){
-					$exists = getData($validation[$key][1], $value, "id");
-					if (isset($exists) && !empty($exists)) {
-						$newData[$key] = $value;
-					} else {
-						$errors[$key] = 'hij bestaat niet in de database';
-					}
-				}
+			case 'CST_VALIDATE_ID':
+				// if(filter_var($value, FILTER_SANITIZE_NUMBER_INT) && $value > 0){
+				// 	$exists = getData($table, $data["name"], "name");
+				// }
 			break;
 			case 'CST_VALIDATE_NAME':
 				$value = strtolower($value);
@@ -281,6 +274,33 @@ function formcontrole($data, $validation, &$errors){
 				}
 			break;
 		}
+		if(array_key_exists($key, $validation)){
+			if ($validation[$key] == "CST_VALIDATE_NAME") {
+				$value = strtolower($value);
+				$value = ucwords($value);
+				if (preg_match("/^[a-zA-Z- ]*$/", $value)) {
+					$newData[$key] = $value;
+				} else {
+					$errors[$key] = 'Alleen letters en spaties zijn toegestaan bij de input.';
+				}
+			} elseif ($validation[$key] == "CST_VALIDATE_ADRESS") {
+				if (preg_match("/^[a-zA-Z0-9- ]*$/", $value)) {
+					$newData[$key] = $value;
+				} else {
+					$errors[$key] = 'Het adress is niet goed ingevuld. Hij moet bestaan uit een straat en straatnummer.';
+				}
+			} elseif ($validation[$key] == "CST_VALIDATE_PHONE") {
+				if (preg_match("/^[0-9- ()]*$/", $value)) {
+					$newData[$key] = $value;
+				} else {
+					$errors[$key] = 'Alleen telefoonnummers zijn toegestaan bij de input.';
+				}
+			} else {
+				if(!filter_var($newData[$key], $validation[$key]) || ((filter_var($newData[$key], $validation[$key]) === 0 && $validation[$key] != (FILTER_VALIDATE_INT || FILTER_SANITIZE_NUMBER_INT)))){
+					$errors[$key] = 'Veld is incorrect';
+				}
+			}
+		}
 	}
  	return $newData;
 }
@@ -317,8 +337,9 @@ function kost_berekening($aantal_uren) {
 	return $kosten;
 }
 
-function validateDate($date, $format = 'd-m-Y H:i') {
+function validateDate($date, $format = 'd-m- H:i') {
     $d = DateTime::createFromFormat($format, $date);
     return $d && $d->format($format) == $date;
 }
 
+var_dump(validateDate('2012-02-28 12:12'));

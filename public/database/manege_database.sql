@@ -29,36 +29,33 @@ CREATE TABLE IF NOT EXISTS `reservations` (
   `visitor` int not null,
   `animal` int not null,
   `date_reservation` DATETIME(0) not NULL,
-  `time_duration` TIME(0) not NULL,
-  `price` DECIMAL(5, 2) not NULL
+  `time_duration` int not NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-CREATE TABLE IF NOT EXISTS `horses` (
+-- CREATE TABLE IF NOT EXISTS `horses` (
+--   `id` int not null unique primary key auto_increment,
+--   `name` varchar(255) not NULL,
+--   `race` varchar(255) not NULL,
+--   `age` TINYINT(3) not NULL,
+--   `show_jumping` TINYTEXT not NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- CREATE TABLE IF NOT EXISTS `ponys` (
+--   `id` int not null unique primary key auto_increment,
+--   `name` varchar(255) not NULL,
+--   `race` varchar(255) not NULL,
+--   `age` TINYINT(3) not NULL,
+--   `height` TINYINT(3) not NULL
+-- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE IF NOT EXISTS `animals` (
   `id` int not null unique primary key auto_increment,
   `name` varchar(255) not NULL,
   `race` varchar(255) not NULL,
   `age` TINYINT(3) not NULL,
+  `height` DECIMAL(6, 1) not NULL, 
   `show_jumping` TINYTEXT not NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `ponys` (
-  `id` int not null unique primary key auto_increment,
-  `name` varchar(255) not NULL,
-  `race` varchar(255) not NULL,
-  `age` TINYINT(3) not NULL,
-  `height` TINYINT(3) not NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- creates table animals
--- CREATE TABLE IF NOT EXISTS `animals` (
---   `id` int not null unique primary key auto_increment,
---   `name` varchar(60) not NULL,
---   `animal` varchar(60) not NULL,
---   `height` varchar(60) not NULL,
---   `race` tinyint(3) unsigned not NULL
---   `age` tinyint(3) unsigned not NULL
---   `show_jumping` tinyint(3) unsigned not NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;

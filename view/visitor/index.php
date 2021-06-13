@@ -7,6 +7,7 @@
 	
 ?>
 <h1>Overzicht van bezoekers</h1>
+<a href="<?=URL?>Main/create_visitor">maak een bezoeker</a>
 <table>	
 	<tr>
 		<th>naam</th>
@@ -20,8 +21,8 @@
 			<td><?= $value["name"];?></td>
 			<td><?= $value["address"];?></td>
 			<td><?= $value["telephone_number"];?></td>
-			<td><a href="<?=URL?>/employee/edit/<?= $value["id"];?>">Wijzigen</a></td>
-			<td><a href="<?=URL?>/employee/delete/<?= $value["id"];?>">Verwijderen</a></td>
+			<td><a href="<?=URL?>employee/edit/<?= $value["id"];?>">Wijzigen</a></td>
+			<td><a href="<?=URL?>employee/delete/<?= $value["id"];?>">Verwijderen</a></td>
 		</tr>
 	<?php } 
 	// de opbouw van de link bepaald welke method in welke controller aangeroepen wordt.

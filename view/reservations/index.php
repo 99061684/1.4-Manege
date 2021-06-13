@@ -1,11 +1,7 @@
 <?php 
-	// if($data['connection']){
-	// 	echo '<h1>HET WERKT!</h1>';
-	// }else{
-	// 	echo '<h1>DB CONNECTION FAILED!</h1>';
-	// }	
-	print_r($data);
+	
 ?>
+<a href="<?=URL?>Main/create_reservations">maak een reservering.</a>
 <h1>Overzicht van reserveringen</h1>
 <table>	
 	<tr>
@@ -22,6 +18,8 @@
 			<td><?= $value["name"];?></td>
 			<td><?= $value["address"];?></td>
 			<td><?= $value["telephone_number"];?></td>
+			<td><?= $value["address"];?></td>
+			<td>€500,-</td>
 			<td><a href="<?=URL?>/employee/edit/<?= $value["id"];?>">Wijzigen</a></td>
 			<td><a href="<?=URL?>/employee/delete/<?= $value["id"];?>">Verwijderen</a></td>
 		</tr>
