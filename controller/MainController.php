@@ -15,10 +15,9 @@ function index() {
 }
 
 function overzicht_animals() {
-	$animals = getAllData("animals");
     $horses = getData("animals", ["height" => ["operator" => ">=", "value"=> 147.5]]);
     $ponys = getData("animals", ["height" => ["operator" => "<", "value"=> 147.5]], true);
-    render('animals/index', ['animals' => $animals, 'horses' => $horses, 'ponys' => $ponys]);
+    render('animals/index', ['horses' => $horses, 'ponys' => $ponys]);
 }
 
 function overzicht_reservations() {

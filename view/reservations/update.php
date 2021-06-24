@@ -26,5 +26,11 @@
 		<p id="totale_kosten">De totale kosten zijn nu: €0,-</p>
 
 		<input type="submit" name="submit" value="Submit">
+		<script src="<?=URL?>js/script.js"></script>
 	</fieldset>
 </form>
+
+<script>
+	const time_duration = document.getElementById("time_duration");
+	kost_berekening(time_duration.value);
+</script>

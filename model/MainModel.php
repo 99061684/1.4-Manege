@@ -174,7 +174,6 @@ function create($data, $table){
 	
 }
 
-
 function update($data, $table){
 	$columns = getColumns($table);
 	$tables = getTables();

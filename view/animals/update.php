@@ -41,8 +41,8 @@
 		<label for="animal">Tot 147,5 cm schofthoogte gaat het om een pony. <br> Ponys kunnen niet doen aan springsport.</label><br>
 
 		<input type="submit" name="submit" value="Submit">
+		<script src="<?=URL?>js/script.js"></script>
 	</fieldset>
-	<script src="<?=URL?>js/script.js"></script>
 </form>
 
 <script>

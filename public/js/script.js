@@ -39,3 +39,4 @@ function kost_berekening(aantal_uren) {
         totale_kosten.innerHTML = "De totale kosten zijn nu: €0,-";
     }
 }
+
