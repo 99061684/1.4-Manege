@@ -16,7 +16,7 @@
 		</select><br>
 
 		<label for="date_reservation">Datum reservering *</label><br>
-		<input type="datetime-local" name="date_reservation" value="<?=$date_reservation;?>" required><br>
+		<input type="datetime-local" datetime="Y-m-d H:i" name="date_reservation" value="<?=$date_reservation;?>" required><br>
 
 		<label for="time_duration">aantal ritten *</label><br>
 		<input type="number" onchange="kost_berekening(this.value)" name="time_duration" min="1" step="1" value="<?=$time_duration;?>" required><br>

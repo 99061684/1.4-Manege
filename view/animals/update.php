@@ -1,6 +1,7 @@
-<h1>Voeg een paard of pony toe</h1>
-<form name="store" method="post" action="<?=URL?>Main/store_animals">
+<h1>bewerk een paard of pony</h1>
+<form name="store" method="post" action="<?=URL?>Main/update_animal">
 	<fieldset>
+		<input type="hidden" name="id" value="<?=$id;?>">
 		<label for="name">Naam *</label><br>
 		<input type="text" name="name" placeholder="Henk" value="<?=$data["name"];?>" required><br>
 		<?php if (isset($errors["name"]) && !empty($errors["name"])) { ?>
@@ -41,4 +42,10 @@
 
 		<input type="submit" name="submit" value="Submit">
 	</fieldset>
+	<script src="<?=URL?>js/script.js"></script>
 </form>
+
+<script>
+	const shofthoogte = document.getElementById("shofthoogte");
+	updateInput(shofthoogte.value);
+</script>

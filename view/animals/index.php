@@ -15,15 +15,15 @@
 			<th>wijzigen</th>
 			<th>verwijderen</th>
 		</tr>
-		<?php  foreach ($data[$key] as $key => $value) { ?>
+		<?php foreach ($data[$key] as $key => $value) {  ?>
 			<tr>
 				<td><?= $value["name"];?></td>
 				<td><?= $value["race"];?></td>
 				<td><?= $value["age"];?></td>
 				<td><?= $value["height"];?> cm</td>
 				<td><?= $value["show_jumping"];?></td>
-				<td><a href="<?=URL?>/employee/edit/<?= $value["id"];?>">Wijzigen</a></td>
-				<td><a href="<?=URL?>/employee/delete/<?= $value["id"];?>">Verwijderen</a></td>
+				<td><a href="<?=URL?>Main/edit_animal/<?= $value["id"];?>">Wijzigen</a></td>
+				<td><a href="<?=URL?>Main/delete_animal/<?= $value["id"];?>">Verwijderen</a></td>
 			</tr>
 		<?php  } 
 		// de opbouw van de link bepaald welke method in welke controller aangeroepen wordt.

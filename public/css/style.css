@@ -30,6 +30,18 @@ th {
     color: white;
 }
 
+.logo {
+    width: 120px;
+    height: auto;
+
+    /* width: auto;
+    height: 50px; */
+}
+
+.error_texts {
+    color: #d6192b;
+}
+
 #container {
     width:90%;
     margin: 0 auto;

@@ -7,13 +7,11 @@ const default_kosten = document.getElementById("default_kosten");
 const max_schoofhoogte_pony = 147.5;
 const kosten_uur = 55;
 
-console.log(totale_kosten);
-console.log(default_kosten);
-
 default_kosten.innerHTML = "De duur van een rit is altijd precies 60 minuten en kost €"+kosten_uur+",-";
 
 function updateInput(value) {
     // Displaying the value
+    console.log(value);
     if (value < max_schoofhoogte_pony) {
         radio_springsport_ja.checked = false;
         radio_springsport_nee.checked = true;
@@ -25,9 +23,9 @@ function updateInput(value) {
         radio_springsport_nee.disabled = false;
     }
     if (radio_springsport_ja.checked) {
-        hidden_springsport.value = "YES";
-    } else {
-        hidden_springsport.value = "NO";
+        hidden_springsport.value = radio_springsport_ja.value;
+    } else if (radio_springsport_nee.checked) {
+        hidden_springsport.value = radio_springsport_nee.value;
     }
 }
 

@@ -13,15 +13,18 @@
 		<th>wijzigen</th>
 		<th>verwijderen</th>
 	</tr>
-	<?php foreach ($data as $key => $value) { ?>
+	<?php foreach ($data as $key => $value) {
+		$visitor = getData("visitors", ["id" => ["operator" => "=", "value"=> $value["visitor"]]]);
+		$animal = getData("animals", ["id" => ["operator" => "=", "value"=> $value["animal"]]]);
+		?>
 		<tr>
-			<td><?= $value["name"];?></td>
-			<td><?= $value["address"];?></td>
-			<td><?= $value["telephone_number"];?></td>
-			<td><?= $value["address"];?></td>
-			<td>€500,-</td>
-			<td><a href="<?=URL?>/employee/edit/<?= $value["id"];?>">Wijzigen</a></td>
-			<td><a href="<?=URL?>/employee/delete/<?= $value["id"];?>">Verwijderen</a></td>
+			<td><?= $visitor["name"];?></td>
+			<td><?= $animal["name"];?></td>
+			<td><?= $value["date_reservation"];?></td>
+			<td><?= $value["time_duration"];?> ritten en <?= $value["time_duration"];?> uren</td>
+			<td>€<?= $value["costs"];?>,-</td>
+			<td><a href="<?=URL?>Main/edit_reservation/<?= $value["id"];?>">Wijzigen</a></td>
+			<td><a href="<?=URL?>Main/delete_reservation/<?= $value["id"];?>">Verwijderen</a></td>
 		</tr>
 	<?php } 
 	// de opbouw van de link bepaald welke method in welke controller aangeroepen wordt.

@@ -80,36 +80,44 @@ function getAllData($table){
 	return $result;
 }
 
-function getData($table, $value, $colum = "id", $operators = "="){
+function getData($table, $parameters, $multiple_rows = null){
 	$data = getTables();
 	foreach ($data as $key => $tables) {
 		if ($table == $tables["Tables_in_manege"]) {
 			try {
 				$conn=openDatabaseConnection();
 
-				switch($operators){
-					case ">=": 
-						$stmt = $conn->prepare("SELECT * FROM `$table` WHERE $colum >= :value");
-					break;
-					case "<=":
-						$stmt = $conn->prepare("SELECT * FROM `$table` WHERE $colum <= :value");
-					break;
-					case ">":
-						$stmt = $conn->prepare("SELECT * FROM `$table` WHERE $colum > :value");
-					break;
-					case "<":
-						$stmt = $conn->prepare("SELECT * FROM `$table` WHERE $colum < :value");
-					break;
-					default:
-					$stmt = $conn->prepare("SELECT * FROM `$table` WHERE $colum = :value");				  
+				$index = 0;
+				$sql = "SELECT * FROM `$table` where";
+				foreach ($parameters as $key => $value) {
+					if($index == 0){
+						$sql .= " `$key`".$value['operator'] .":$key";
+					}
+					else{
+						$sql .= " AND `$key`".$value['operator'] .":$key";
+					}
+					$index++;
 				}
-				$stmt->bindParam(":value", $value);
+
+				$stmt = $conn->prepare($sql);
+				foreach ($parameters as $key => $value) {
+					$stmt->bindParam(":$key", $value['value']);
+				}
 				$stmt->execute();
-				
-				if ($colum == "height") {
-					$result = $stmt->fetchAll();
+				$count = $stmt->rowCount();
+
+				if($multiple_rows == null){
+					if ($count == 1) {
+						$result = $stmt->fetch();
+					} else {
+						$result = $stmt->fetchAll();
+					}
 				} else {
-					$result = $stmt->fetch();
+					if ($multiple_rows) {
+						$result = $stmt->fetchAll();
+					} else {
+						$result = $stmt->fetch();
+					}
 				}
 				break;
 			} catch(PDOException $e){ // Vang de foutmelding af
@@ -120,101 +128,138 @@ function getData($table, $value, $colum = "id", $operators = "="){
 	}
 	$conn = null;
 	return $result;
-}
+} 
 //-------------------- CRUD functies database ----------------
 function create($data, $table){
 	$columns = getColumns($table);
+	$tables = getTables();
 	unset($data["submit"]);
 	unset($columns["id"]);
 	$allPassed = check_array_exist($data, $columns);
-	$exists = getData($table, $data["name"], "name");
-	
-	if (isset($exists) && empty($exists)) { //check of hij niet al in de database staat.
-		if ($allPassed && isset($data) && !empty($data)) { //checkt of alle data bestaat
-			try {
-				$conn=openDatabaseConnection();
 
-				$key = array_keys($data);  //get key(column name)
-				$value = array_values($data);  //get values (values to be inserted)		
-				$stmt = $conn->prepare("INSERT INTO `$table` ( ". implode(',' , $key) .") VALUES('". implode("','" , $value) ."')");
-			
-				$stmt->execute(); 
-			}
-			catch(PDOException $e){
-				echo "Connection failed: " . $e->getMessage();
-			} 
-		} else {
-			echo "Er missen gegevens bij het aanmaken.";
-			print_r($data);
-		}     
-	} else { //als de game al is ingepland op dezelfde tijd
-		echo "In de tabel ".$table." bestaat de naam: " . $data["name"] . " al.";
-	}
-}
-
-function updateEmployee($data, $table){
-	// Maak hier de code om een medewerker te bewerken
-	$allPassed = check_array_exist($data);
-	$exists = getData($table, $data["name"], "name");
-	
-	if (isset($exists) && (empty($exists) || $exists["id"] == $data["id_employee"])) { //check of de employee niet al in de database staat.
-		if ($allPassed && isset($data) && !empty($data)) { //check of alle data bestaat
-			try {
-				$conn=openDatabaseConnection();
-		
-				$stmt = $conn->prepare("UPDATE employees SET name=:name, age=:age WHERE id=:id");
-	
-				$stmt->bindParam(':name', $data["input_name"]);
-				$stmt->bindParam(':age', $data["input_age"]);
-				$stmt->bindParam(':id', $data["id_employee"]);
-			
-				$stmt->execute(); 
-			}
-			catch(PDOException $e){
-				echo "Connection failed: " . $e->getMessage();
-			} 
-		} else {
-			echo "Er missen gegevens bij het aanpassen van de employee.";
-		}     
-	} else { //als de game al is ingepland op dezelfde tijd
-		echo "De werknemer met de naam ".$data["name"]." bestaat al.";
-	}
-}
-
-function deleteEmployee($id){
-	// Maak hier de code om een medewerker te verwijderen
-	settype($id, "int");
-	$exists = getData($table, $data["name"], "name");
-	if (isset($id) && !empty($id) && is_numeric($id) && isset($exists) && !empty($exists)) { 
-		try {
-			$conn=openDatabaseConnection();
-	
-			$stmt = $conn->prepare("DELETE FROM employees WHERE id=:id");
-			$stmt->bindParam(':id', $id);
-			$stmt->execute(); 
-		}
-		catch(PDOException $e){
-			echo "Connection failed: " . $e->getMessage();
-		} 
+	if ($table == "reservations") {
+		$exists = getData($table, ["visitor" => ["operator" => "=", "value"=> $data["visitor"]], "animal" => ["operator" => "=", "value"=> $data["animal"]], "date_reservation" => ["operator" => "=", "value"=> $data["date_reservation"]]]);
 	} else {
-		echo "De employee kan niet worden verwijderd, omdat hij niet bestaat of het id incorrect is.";
+		$exists = getData($table, ["name" => ["operator" => "=", "value"=> $data["name"]]]);
+	}
+	
+	foreach ($tables as $key => $tablenames) {
+		if ($table == $tablenames["Tables_in_manege"]) {
+			if (isset($exists) && empty($exists)) { //check of hij niet al in de database staat.
+				if ($allPassed && isset($data) && !empty($data)) { //checkt of alle data bestaat
+					try {
+						$conn=openDatabaseConnection();
+
+						$key = array_keys($data);  //get key(column name)
+						
+						$stmt = $conn->prepare("INSERT INTO `$table` (". implode(',' , $key) .") VALUES(:". implode(", :" , $key) .")");
+						foreach ($data as $key => $value) {
+							$stmt->bindParam(":$key", $data[$key]);
+						}
+						$stmt->execute(); 
+					}
+					catch(PDOException $e){
+						echo "Connection failed: " . $e->getMessage();
+					} 
+				} else {
+					echo "Er missen gegevens bij het aanmaken.";
+				}     
+			} else { //als de game al is ingepland op dezelfde tijd
+				echo "In de tabel ".$table." bestaat de naam: " . $data["name"] . " al.";
+			}
+			break;
+		}
 	}
 
-	$conn = null;
+	
+}
+
+
+function update($data, $table){
+	$columns = getColumns($table);
+	$tables = getTables();
+	unset($data["submit"]);
+	$allPassed = check_array_exist($data, $columns);
+	
+	foreach ($tables as $key => $tablenames) {
+		if ($table == $tablenames["Tables_in_manege"]) {
+			if ($allPassed && isset($data) && !empty($data)) { //checkt of alle data bestaat
+				try {
+					$conn=openDatabaseConnection();
+	
+					$key_array = array_keys($data);  //get key(column name)
+					unset($key_array[array_search("id",$key_array)]);
+	
+					$sql = "UPDATE `$table` SET ";
+					foreach ($key_array as $key => $value) {
+						if (array_key_last($key_array) == $key) {
+							$sql .= $value . "=:" . $value . " ";
+						} else {
+							$sql .= $value . "=:" . $value . ", ";
+						}
+					}
+					$sql .= "WHERE id=:id";
+					$stmt = $conn->prepare($sql);
+					foreach ($data as $key => $value) {
+						$stmt->bindParam(":$key", $data[$key]);
+					}
+					$stmt->bindParam(":id", $data["id"]);
+					$stmt->execute(); 
+				}
+				catch(PDOException $e){
+					echo "Connection failed: " . $e->getMessage();
+				} 
+			} else {
+				echo "Er missen gegevens bij het aanmaken.";
+				print_r($data);
+			}
+			break;
+		}
+	}
+}
+
+function delete($data, $table){
+	// Maak hier de code om een medewerker te verwijderen
+	$tables = getTables();
+	$id = $data["id"];
+	$id = intval($id);
+	$exists = getData($table, ["id" => ["operator" => "=", "value"=> $data["id"]]]);
+	$column = substr($table, 0, -1);
+	$reserveringen = getData("reservations", [$column => ["operator" => "=", "value"=> $id]]);
+
+	foreach ($tables as $key => $tablenames) {
+		if ($table == $tablenames["Tables_in_manege"]) {
+			if (isset($id) && !empty($id) && is_numeric($id) && isset($exists) && !empty($exists)) { 
+				if(empty($reserveringen)){
+					try {
+						$conn=openDatabaseConnection();
+				
+						$stmt = $conn->prepare("DELETE FROM `$table` WHERE id=:id");
+						$stmt->bindParam(':id', $id);
+						$stmt->execute(); 
+					}
+					catch(PDOException $e){
+						echo "Connection failed: " . $e->getMessage();
+					}
+				} else {
+					echo "Hij kan niet worden verwijderd, omdat hij reserveringen heeft.";
+				} 
+			} else {
+				echo "Hij kan niet worden verwijderd, omdat hij niet bestaat of het id incorrect is.";
+			}
+		
+			$conn = null;
+			break;
+		}
+	}
 }
 
 // -------------------- form controle functies ----------------
 define('CST_VALIDATE_NAME', 'CST_VALIDATE_NAME');
 define('CST_VALIDATE_ADRESS', 'CST_VALIDATE_ADRESS');
 define('CST_VALIDATE_PHONE', 'CST_VALIDATE_PHONE');
-define('CST_VALIDATE_DATE', 'CST_VALIDATE_DATE');
+define('CST_VALIDATE_DATE', 'CST_VALIDATE_DATE'); 
 $errors = [];
-
-// $array = ["name" => "bas VErdoorn"];
-// $data = formcontrole($array, ['name' => CST_VALIDATE_NAME,'age' => FILTER_VALIDATE_INT, 'email' => FILTER_VALIDATE_EMAIL], $errors);
-
-// $array = ["id" => 5];
-// $data = formcontrole($array, ['id' => $CST_VALIDATE_ID1], $errors);
 
 function formcontrole($data, $validation, &$errors){
 	$newData = [];
@@ -228,7 +273,7 @@ function formcontrole($data, $validation, &$errors){
 		switch ($validation[$key]) {
 			case $validation[$key][0] == 'CST_VALIDATE_ID':
 				if(filter_var($value, FILTER_SANITIZE_NUMBER_INT)){
-					$exists = getData($validation[$key][1], $value, "id");
+					$exists = getData($validation[$key][1], ["id" => ["operator" => "=", "value"=> $value]]);
 					if (isset($exists) && !empty($exists)) {
 						$newData[$key] = $value;
 					} else {
@@ -260,24 +305,27 @@ function formcontrole($data, $validation, &$errors){
 				}
 			break;
 			case 'CST_VALIDATE_DATE':
-				if (validateDate($value, $format = 'd-m-Y H:i')) {
-					$newData[$key] = $value;
-				} else {
-					$errors[$key] = 'Alleen geldige datums zijn toegestaan bij de input.';
-				}
+				// echo "value datetime: ";
+				// var_dump($value);
+				// // echo "<br>";
+				// // echo "format: YYYY-MM-DDThh:mm <br> na checken if value datetime dezelfde format heeft als de format: ";
+				// var_dump(validateDate($value, 'Y-m-d H:i'));
+				// // echo "<br> error: ";
+				// if (validateDate($value, 'Y-m-d H:i')) {
+				// 	$newData[$key] = $value;
+				// } else {
+				// 	$errors[$key] = 'Alleen geldige datums zijn toegestaan bij de input.';
+				// }
 			break;
-			case 'CST_VALIDATE_NAME':
-				$value = strtolower($value);
-				$value = ucwords($value);
-				if (preg_match("/^[a-zA-Z- ]*$/", $value)) {
-					$newData[$key] = $value;
-				} else {
-					$errors[$key] = 'Alleen letters en spaties zijn toegestaan bij de input.';
-				}
+			case FILTER_VALIDATE_BOOLEAN:
+				$filtered = filter_var($newData[$key], $validation[$key], FILTER_NULL_ON_FAILURE);
+				if($filtered === null) {
+					$errors[$key] = 'Veld is geen boolean, ' . $newData[$key];
+				} 
 			break;
 			default:
 				if(!filter_var($newData[$key], $validation[$key]) || ((filter_var($newData[$key], $validation[$key]) === 0 && $validation[$key] != (FILTER_VALIDATE_INT || FILTER_SANITIZE_NUMBER_INT)))){
-					$errors[$key] = 'Veld is incorrect';
+					$errors[$key] = 'Veld is incorrect, ' . $newData[$key];
 				}
 			break;
 		}
@@ -317,8 +365,15 @@ function kost_berekening($aantal_uren) {
 	return $kosten;
 }
 
-function validateDate($date, $format = 'd-m-Y H:i') {
+function validateDate($date, $format = 'Y-m-dTH:i') {
     $d = DateTime::createFromFormat($format, $date);
+	// echo ' {hoi' . $d . '} ';
+	// echo $date .' '. $format.'<br>';
     return $d && $d->format($format) == $date;
+
+	// $date = new DateTime($date);
+	// echo '<br>{'. $date->format($format). '}<br>';
+	// return $date->format($format) == $date;
 }
 
+// 'YYYY-MM-DDThh:mm'

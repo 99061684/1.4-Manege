@@ -1,67 +1,118 @@
 -- phpMyAdmin SQL Dump
--- version 4.4.15.9
--- https://www.phpmyadmin.net
+-- version 4.9.1
+-- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Gegenereerd op: 14 mei 2019 om 08:51
--- Serverversie: 5.6.37
--- PHP-versie: 7.1.8
-
--- Verwijder de database
-drop database if exists `manege`;
--- Maak de database aan als deze nog niet bestaat.
-create database if not exists `manege`;
--- Gebruik de database voor de volgende queries.
-use `manege`;
+-- Gegenereerd op: 24 jun 2021 om 09:58
+-- Serverversie: 8.0.18
+-- PHP-versie: 7.3.11
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
 SET time_zone = "+00:00";
 
-create TABLE IF NOT EXISTS `visitors` (
-	`id` int not null unique primary key auto_increment,
-	`name` varchar(255) not null,
-	`address` varchar(255) not null,
-	`telephone_number` varchar(12) not null
-) engine = InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `reservations` (
-  `id` int not null unique primary key auto_increment,
-  `visitor` int not null,
-  `animal` int not null,
-  `date_reservation` DATETIME(0) not NULL,
-  `time_duration` int not NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- CREATE TABLE IF NOT EXISTS `horses` (
---   `id` int not null unique primary key auto_increment,
---   `name` varchar(255) not NULL,
---   `race` varchar(255) not NULL,
---   `age` TINYINT(3) not NULL,
---   `show_jumping` TINYTEXT not NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
--- CREATE TABLE IF NOT EXISTS `ponys` (
---   `id` int not null unique primary key auto_increment,
---   `name` varchar(255) not NULL,
---   `race` varchar(255) not NULL,
---   `age` TINYINT(3) not NULL,
---   `height` TINYINT(3) not NULL
--- ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
-CREATE TABLE IF NOT EXISTS `animals` (
-  `id` int not null unique primary key auto_increment,
-  `name` varchar(255) not NULL,
-  `race` varchar(255) not NULL,
-  `age` TINYINT(3) not NULL,
-  `height` DECIMAL(6, 1) not NULL, 
-  `show_jumping` TINYTEXT not NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
+--
+-- Database: `manege`
+--
 
+-- --------------------------------------------------------
 
+--
+-- Tabelstructuur voor tabel `animals`
+--
 
+CREATE TABLE `animals` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `race` varchar(255) NOT NULL,
+  `age` tinyint(3) NOT NULL,
+  `height` decimal(6,1) NOT NULL,
+  `show_jumping` tinytext NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabelstructuur voor tabel `reservations`
+--
+
+CREATE TABLE `reservations` (
+  `id` int(11) NOT NULL,
+  `visitor` int(11) NOT NULL,
+  `animal` int(11) NOT NULL,
+  `date_reservation` datetime NOT NULL,
+  `time_duration` int(11) NOT NULL,
+  `costs` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabelstructuur voor tabel `visitors`
+--
+
+CREATE TABLE `visitors` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `address` varchar(255) NOT NULL,
+  `telephone_number` varchar(12) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Indexen voor geëxporteerde tabellen
+--
+
+--
+-- Indexen voor tabel `animals`
+--
+ALTER TABLE `animals`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indexen voor tabel `reservations`
+--
+ALTER TABLE `reservations`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- Indexen voor tabel `visitors`
+--
+ALTER TABLE `visitors`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `id` (`id`);
+
+--
+-- AUTO_INCREMENT voor geëxporteerde tabellen
+--
+
+--
+-- AUTO_INCREMENT voor een tabel `animals`
+--
+ALTER TABLE `animals`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT voor een tabel `reservations`
+--
+ALTER TABLE `reservations`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT voor een tabel `visitors`
+--
+ALTER TABLE `visitors`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
